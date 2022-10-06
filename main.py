@@ -3,20 +3,24 @@ import os
 import requests
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
 TRACKING_URL = os.environ.get("TRACKING_URL")
 APP_TOKEN = os.environ.get("APP_TOKEN")
 USER_KEY = os.environ.get("USER_KEY")
 
-options = webdriver.ChromeOptions()
+options = Options()
 options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 options.headless = True
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--no-sandbox")
 options.add_argument("--window-size=1920,1080")
 
-driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
+service = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
+
+driver = webdriver.Chrome(options=options, service=service)
 
 
 driver.get(TRACKING_URL)
