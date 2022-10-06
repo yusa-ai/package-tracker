@@ -1,1 +1,1 @@
-worker: python main.py
+runcheck: python main.py
