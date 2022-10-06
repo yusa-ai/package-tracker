@@ -1,23 +1,23 @@
+import os
+
 import requests
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.edge.options import Options
-from selenium.webdriver.edge.service import Service
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-TRACKING_URL = "***REMOVED***"
+TRACKING_URL = os.environ.get("TRACKING_URL")
+APP_TOKEN = os.environ.get("APP_TOKEN")
+USER_KEY = os.environ.get("USER_KEY")
 
-APP_TOKEN = "***REMOVED***"
-USER_KEY = "***REMOVED***"
-
-options = Options()
+options = webdriver.ChromeOptions()
+options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 options.headless = True
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--no-sandbox")
 options.add_argument("--window-size=1920,1080")
 
-service = Service(EdgeChromiumDriverManager().install())
+driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
 
-driver = webdriver.ChromiumEdge(options=options, service=service)
 
 driver.get(TRACKING_URL)
 
