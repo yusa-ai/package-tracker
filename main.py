@@ -8,8 +8,13 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
 TRACKING_URL = os.environ.get("TRACKING_URL")
+
+# Pushover
 APP_TOKEN = os.environ.get("APP_TOKEN")
 USER_KEY = os.environ.get("USER_KEY")
+
+# Sheety
+SHEETY_ENDPOINT = os.environ.get("SHEETY_ENDPOINT")
 
 options = Options()
 options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -35,7 +40,6 @@ while not page_loaded:
     except NoSuchElementException:
         page_loaded = True
 
-print("tracking page loaded")
 # driver.get_screenshot_as_file("screenshot.png")
 
 # Get last tracking status
@@ -45,26 +49,31 @@ timeline = [item for item in timeline if item.text != ""]
 last_update = timeline[0].text
 last_update = last_update.replace("\n", " ")
 
-print(last_update)
+# Read last status from Google Sheets
+response = requests.get(url=SHEETY_ENDPOINT)
+response.raise_for_status()
 
-# Read last status from file
-with open("status.txt", "r+") as file:
-    file_status = file.read()
+response = response.json()
+saved_status = response["packageTracker"][0]["response"]
+row_id = response["packageTracker"][0]["id"]
 
-    if last_update != file_status:
-        # Update file
-        file.seek(0)
-        file.write(last_update)
-        file.truncate()
+if last_update != saved_status:
+    # Update Google Sheets
+    edit = requests.put(url=f"{SHEETY_ENDPOINT}/{row_id}", json={
+        "packageTracker": {
+            "response": last_update
+        }
+    })
+    edit.raise_for_status()
 
-        # Send push notification
-        result = requests.post("https://api.pushover.net/1/messages.json", json={
-            "token": APP_TOKEN,
-            "user": USER_KEY,
-            "message": last_update
-        })
-        result.raise_for_status()
-        print("notification sent")
+    # Send push notification
+    result = requests.post("https://api.pushover.net/1/messages.json", json={
+        "token": APP_TOKEN,
+        "user": USER_KEY,
+        "message": last_update
+    })
+    result.raise_for_status()
+    print(f"[PackageTracker] Notification sent: {last_update}")
 
-    else:
-        print("up to date")
+else:
+    print(f"[PackageTracker] Package status up to date")
