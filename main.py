@@ -27,8 +27,8 @@ GOOGLE_CREDENTIALS = {
 GOOGLE_SPREADSHEET_NAME = "package-tracker"
 
 # Pushover
-APP_TOKEN = os.environ.get("APP_TOKEN")
-USER_KEY = os.environ.get("USER_KEY")
+PUSHOVER_APP_TOKEN = os.environ.get("APP_TOKEN")
+PUSHOVER_USER_KEY = os.environ.get("USER_KEY")
 
 
 options = Options()
@@ -78,8 +78,8 @@ if last_update != saved_status:
 
     # Send push notification
     result = requests.post("https://api.pushover.net/1/messages.json", json={
-        "token": APP_TOKEN,
-        "user": USER_KEY,
+        "token": PUSHOVER_APP_TOKEN,
+        "user": PUSHOVER_USER_KEY,
         "message": last_update
     })
     result.raise_for_status()
