@@ -41,7 +41,7 @@
         "description": "Pushover API app token"
       },
       "PUSHOVER_USER_KEY": {
-        "description": "Pushover API app token"
+        "description": "Pushover API user key"
       },
       "TRACKING_URL": {
         "description": "The URL where you can track your package"
