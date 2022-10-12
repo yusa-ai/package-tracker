@@ -47,11 +47,13 @@
         "description": "The URL where you can track your package"
       }
     },
-    "image": "heroku/python",
     "addons": [
       "scheduler"
     ],
     "buildpacks": [
+      {
+        "url": "heroku/python"
+      },
       {
         "url": "https://github.com/heroku/heroku-buildpack-google-chrome"
       },
