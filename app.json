@@ -20,40 +20,31 @@
         "value": "/app/.apt/usr/bin/google-chrome"
       },
       "GOOGLE_CLIENT_EMAIL": {
-        "description": "Google Cloud project config",
-        "generator": "secret"
+        "description": "Google Cloud project config"
       },
       "GOOGLE_CLIENT_ID": {
-        "description": "Google Cloud project config",
-        "generator": "secret"
+        "description": "Google Cloud project config"
       },
       "GOOGLE_CLIENT_X509_CERT_URL": {
-        "description": "Google Cloud project config",
-        "generator": "secret"
+        "description": "Google Cloud project config"
       },
       "GOOGLE_PRIVATE_KEY": {
-        "description": "Google Cloud project config",
-        "generator": "secret"
+        "description": "Google Cloud project config"
       },
       "GOOGLE_PRIVATE_KEY_ID": {
-        "description": "Google Cloud project config",
-        "generator": "secret"
+        "description": "Google Cloud project config"
       },
       "GOOGLE_PROJECT_ID": {
-        "description": "Google Cloud project config",
-        "generator": "secret"
+        "description": "Google Cloud project config"
       },
       "PUSHOVER_APP_TOKEN": {
-        "description": "Pushover API app token",
-        "generator": "secret"
+        "description": "Pushover API app token"
       },
       "PUSHOVER_USER_KEY": {
-        "description": "Pushover API app token",
-        "generator": "secret"
+        "description": "Pushover API app token"
       },
       "TRACKING_URL": {
-        "description": "The URL where you can track your package",
-        "value": "https://google.com"
+        "description": "The URL where you can track your package"
       }
     },
     "image": "heroku/python",
