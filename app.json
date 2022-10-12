@@ -1,6 +1,6 @@
 {
     "name": "package-tracker",
-    "description": "A Python script to track the status of a package from a webpage and send updates as push notifications.",
+    "description": "A Python script to track the status of a package from a webpage and send updates as push notifications",
     "keywords": [
       "tracker",
       "python",
