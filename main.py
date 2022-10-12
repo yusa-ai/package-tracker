@@ -8,10 +8,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
-
+# URL to track shipping (should probably contain the tracking number as a GET parameter)
 TRACKING_URL = os.environ.get("TRACKING_URL")
 
-# Google Sheets
+# Google Sheets API
 GOOGLE_CREDENTIALS = {
   "type": "service_account",
   "project_id": os.environ.get("GOOGLE_PROJECT_ID"),
@@ -26,9 +26,9 @@ GOOGLE_CREDENTIALS = {
 }
 GOOGLE_SPREADSHEET_NAME = "package-tracker"
 
-# Pushover
-PUSHOVER_APP_TOKEN = os.environ.get("APP_TOKEN")
-PUSHOVER_USER_KEY = os.environ.get("USER_KEY")
+# Pushover API
+PUSHOVER_APP_TOKEN = os.environ.get("PUSHOVER_APP_TOKEN")
+PUSHOVER_USER_KEY = os.environ.get("PUSHOVER_USER_KEY")
 
 
 options = Options()
@@ -47,43 +47,54 @@ driver.get(TRACKING_URL)
 
 page_loaded = False
 
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+# THIS MAKES SURE THAT THE CONTENTS OF THE WEBPAGE (STATUS 
+# UPDATES) ARE FULLY LOADED BEFORE SCRAPING AND YOU SHOULD 
+# PROBABLY EDIT IT
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
 # Wait for page loading
 while not page_loaded:
     try:
+        # Webpage displays a loading animation with a spinning wheel 
+        # while loading my package's data
         driver.find_element(By.CSS_SELECTOR, ".el-loading-mask")
 
+    # The loading animation is gone so the page is done rendering
     except NoSuchElementException:
         page_loaded = True
 
-# driver.get_screenshot_as_file("screenshot.png")
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+# THIS HAS TO BE EDITED DEPENDING ON THE TRACKING WEBSITE SO THAT 
+# latest_update CONTAINS YOUR PACKAGE'S LATEST STATUS AS A STRING
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
-# Get last tracking status
-timeline = driver.find_elements(By.CSS_SELECTOR, ".timeline-main.clearfix")
-
-timeline = [item for item in timeline if item.text != ""]
-last_update = timeline[0].text
-last_update = last_update.replace("\n", " ")
+# Get latest tracking status
+updates = driver.find_elements(By.CSS_SELECTOR, ".timeline-main.clearfix")
+updates = [item for item in update if item.text != ""]
+latest_update = updates[0].text
+latest_update = latest_update.replace("\n", " ")
 
 # Initialize Google Spreadsheet
 gc = gspread.service_account_from_dict(GOOGLE_CREDENTIALS)
 sh = gc.open(GOOGLE_SPREADSHEET_NAME)
 worksheet = sh.get_worksheet(0)
 
-# Read last status from Google Sheets
+# Read latest status from Google Sheets
 saved_status = worksheet.acell("A1").value
 
-if last_update != saved_status:
+if latest_update != saved_status:
     # Update Google Sheets
-    worksheet.update("A1", last_update)
+    worksheet.update("A1", latest_update)
 
     # Send push notification
     result = requests.post("https://api.pushover.net/1/messages.json", json={
         "token": PUSHOVER_APP_TOKEN,
         "user": PUSHOVER_USER_KEY,
-        "message": last_update
+        "message": latest_update
     })
     result.raise_for_status()
-    print(f"[PackageTracker] Notification sent: {last_update}")
+    print(f"[PackageTracker] Notification sent: {latest_update}")
 
 else:
     print(f"[PackageTracker] Package status up to date")
