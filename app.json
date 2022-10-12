@@ -1,0 +1,71 @@
+{
+    "name": "package-tracker",
+    "description": "A Python script to track the status of a package from a webpage and send updates as push notifications.",
+    "keywords": [
+      "tracker",
+      "python",
+      "package",
+      "push-notifications",
+      "webscraping",
+      "sheets-api"
+    ],
+    "repository": "https://github.com/yusa-ai/package-tracker",
+    "env": {
+      "CHROMEDRIVER_PATH": {
+        "description": "Chrome driver buildpack path for Selenium",
+        "value": "/app/.chromedriver/bin/chromedriver"
+      },
+      "GOOGLE_CHROME_BIN": {
+        "description": "Google Chrome buildpack path for Selenium",
+        "value": "/app/.apt/usr/bin/google-chrome"
+      },
+      "GOOGLE_CLIENT_EMAIL": {
+        "description": "Google Cloud project config",
+        "generator": "secret"
+      },
+      "GOOGLE_CLIENT_ID": {
+        "description": "Google Cloud project config",
+        "generator": "secret"
+      },
+      "GOOGLE_CLIENT_X509_CERT_URL": {
+        "description": "Google Cloud project config",
+        "generator": "secret"
+      },
+      "GOOGLE_PRIVATE_KEY": {
+        "description": "Google Cloud project config",
+        "generator": "secret"
+      },
+      "GOOGLE_PRIVATE_KEY_ID": {
+        "description": "Google Cloud project config",
+        "generator": "secret"
+      },
+      "GOOGLE_PROJECT_ID": {
+        "description": "Google Cloud project config",
+        "generator": "secret"
+      },
+      "PUSHOVER_APP_TOKEN": {
+        "description": "Pushover API app token",
+        "generator": "secret"
+      },
+      "PUSHOVER_USER_KEY": {
+        "description": "Pushover API app token",
+        "generator": "secret"
+      },
+      "TRACKING_URL": {
+        "description": "The URL where you can track your package",
+        "value": "https://google.com"
+      }
+    },
+    "image": "heroku/python",
+    "addons": [
+      "scheduler"
+    ],
+    "buildpacks": [
+      {
+        "url": "https://github.com/heroku/heroku-buildpack-google-chrome"
+      },
+      {
+        "url": "https://github.com/heroku/heroku-buildpack-chromedriver"
+      }
+    ]
+  }
